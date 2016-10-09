@@ -7,88 +7,343 @@
 //
 
 import UIKit
+import CoreBluetooth
 
-class MasterViewController: UITableViewController {
+struct flagsType {
+    var scanning:Bool = false
+}
 
+
+class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,CBCentralManagerDelegate{
+    
+    
+    
+    
+    @IBOutlet var peripheralsTableView: UITableView!
+    @IBOutlet var emptyView: UIView!
+    @IBOutlet var scanOrnotBtn: UIBarButtonItem!
+    
+    
+    
+
+    
+    
+    
     var detailViewController: DetailViewController? = nil
-    var objects = [Any]()
-
-
+    
+    var bleManager                  : CBCentralManager?
+    var timer                       : Timer?
+    var timeoutCounter              : UInt16 = UInt16(Constants.app.PERIPHERAL_SCAN_TIMEOUT_PERIOD)
+    var busyScannig                 : UIActivityIndicatorView!
+    
+    var peripherals                 = [Peripherals]()
+    var flags                       = flagsType(scanning: false)
+    
+    
+    
+    
+    @IBAction func scanORnotEvent(_ sender: AnyObject) {
+        if flags.scanning
+        {
+            scanningState(active:false)
+        }
+        else
+        {
+            scanningState(active: true)
+        }
+        
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        self.navigationItem.leftBarButtonItem = self.editButtonItem
-
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
-        self.navigationItem.rightBarButtonItem = addButton
+        
+        busyScannig                             = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+        busyScannig.hidesWhenStopped            = true
+        self.navigationItem.leftBarButtonItem   = UIBarButtonItem(customView: busyScannig)
+        busyScannig.startAnimating()
+        
+        
+        let serialQueue = DispatchQueue.init(label: Constants.queues.bleCentralManagerSerialQueue)
+        bleManager = CBCentralManager(delegate: self, queue: serialQueue)
+        
+        
         if let split = self.splitViewController {
+            
             let controllers = split.viewControllers
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
     }
-
+    
+    
     override func viewWillAppear(_ animated: Bool) {
-        self.clearsSelectionOnViewWillAppear = self.splitViewController!.isCollapsed
         super.viewWillAppear(animated)
+        peripheralsTableView.reloadData()
     }
-
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    func insertNewObject(_ sender: Any) {
-        objects.insert(NSDate(), at: 0)
-        let indexPath = IndexPath(row: 0, section: 0)
-        self.tableView.insertRows(at: [indexPath], with: .automatic)
-    }
-
-    // MARK: - Segues
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetail" {
-            if let indexPath = self.tableView.indexPathForSelectedRow {
-                let object = objects[indexPath.row] as! NSDate
-                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = object
-                controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
-                controller.navigationItem.leftItemsSupplementBackButton = true
-            }
+    
+    
+    
+    
+    
+    
+    // MARK:-  helpers
+    func scanTimerEvent(){
+        peripheralsTableView.reloadData()
+        
+        timeoutCounter = timeoutCounter-1
+        if timeoutCounter <= 0 {
+            scanningState(active:false)
         }
     }
-
-    // MARK: - Table View
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return objects.count
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-
-        let object = objects[indexPath.row] as! NSDate
-        cell.textLabel!.text = object.description
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
+    
+    
+    func scanForPeripherals(enable:Bool, filterUUID:CBUUID?) -> Bool {
+        
+        
+        guard bleManager?.state == CBManagerState.poweredOn
+            else
+        {
+            let alert = UIAlertController(title: "Error", message: "", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+            
+            switch (bleManager?.state)! {
+            case .unknown:
+                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unknown
+            case .resetting:
+                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.resetting
+            case .unsupported:
+                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unsupported
+            case .unauthorized:
+                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unauthorized
+            default:
+                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unknown
+            }
+            
+            self.present(alert, animated: true, completion: nil)
+            
+            NSLog("%s", alert.message! as String)
+            
+            return false
+        }
+        
+        
+  
+            if enable == true {
+                let options: NSDictionary = NSDictionary(objects: [NSNumber(value: true)], forKeys: [CBCentralManagerScanOptionAllowDuplicatesKey as NSCopying])
+                if filterUUID != nil {
+                    self.bleManager?.scanForPeripherals(withServices: [filterUUID!], options: options as? [String : AnyObject])
+                } else {
+                    self.bleManager?.scanForPeripherals(withServices: nil, options: options as? [String : AnyObject])
+                }
+                self.timer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(self.scanTimerEvent), userInfo: nil, repeats: true)
+            } else {
+                NSLog("stop scan")
+                self.timer?.invalidate()
+                self.timer = nil
+                self.bleManager?.stopScan()
+            }
+    
+        
         return true
     }
-
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            objects.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
+    
+    
+    func scanningState(active:Bool){
+        
+        if active {
+            busyScannig.startAnimating()
+            flags.scanning = true
+            scanOrnotBtn.title = "Cancel2"
+            
+            timer = Timer.scheduledTimer(timeInterval: 1.0 , target: self, selector: #selector(scanTimerEvent), userInfo: nil, repeats: true)
+            timeoutCounter = UInt16(Constants.app.PERIPHERAL_SCAN_TIMEOUT_PERIOD)
+            
+            let success = self.scanForPeripherals(enable: true,filterUUID: nil)
+            if !success {/*TODO: log error*/ }
+            return
+        }
+        
+        
+            timer?.invalidate()
+            timer = nil
+            busyScannig.stopAnimating()
+            flags.scanning = false
+            scanOrnotBtn.title = "Scan"
+            let success  = scanForPeripherals(enable: false, filterUUID: nil)
+            if !success {/*TODO: log error*/ }
+    }
+    
+    
+    
+    
+    
+    // MARK: - Segues
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showDetail" {
+            //            if let indexPath = self.tableView.indexPathForSelectedRow {
+            //                let object = objects[indexPath.row] as! NSDate
+            //                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+            //                controller.detailItem = object
+            //                controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
+            //                controller.navigationItem.leftItemsSupplementBackButton = true
+            //            }
         }
     }
-
-
+    
+    
+    
+    func getConnectedPeripherals(filterUUID:CBUUID?) -> NSArray {
+        var retreivedPeripherals : NSArray?
+        
+        if filterUUID != nil {
+            
+            retreivedPeripherals     = (bleManager?.retrieveConnectedPeripherals(withServices: [filterUUID!]))! as NSArray
+        }
+        
+        return retreivedPeripherals!
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //MARK: - CBCentralManagerDelegate
+    
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        
+        guard central.state == CBManagerState.poweredOn
+            else
+        {
+            let alert = UIAlertController(title: "Error", message: "", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+            
+            switch central.state {
+            case .unknown:
+                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unknown
+            case .resetting:
+                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.resetting
+            case .unsupported:
+                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unsupported
+            case .unauthorized:
+                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unauthorized
+            default:
+                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unknown
+            }
+            
+            self.present(alert, animated: true, completion: nil)
+            
+            NSLog("%s", alert.message! as String)
+            
+            return
+        }
+        
+        
+        
+        scanningState(active:true)
+        // peripherals = NSMutableArray(array: self.getConnectedPeripherals(filterUUID: nil))
+        
+        
+    }
+    
+    
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber)
+    {
+        
+        var peripheralDevice = Peripherals(withPeripheral: peripheral, andRSSI: RSSI.int32Value, andIsConnected: false)
+        
+        
+        if !self.peripherals.contains(peripheralDevice)
+        {
+            self.peripherals.append(peripheralDevice)
+        }
+        else
+        {
+            peripheralDevice = self.peripherals[self.peripherals.index(of: peripheralDevice)!]
+            peripheralDevice.RSSI = RSSI.int32Value
+        }
+        
+        DispatchQueue.main.async {
+            self.peripheralsTableView.reloadData()
+        }
+        
+    }
+    
+    
+    func centralManager(_ central: CBCentralManager,didRetrieveConnectedPeripherals peripherals: [CBPeripheral])
+    {
+        
+    }
+    
+    
+    func centralManager(_ central: CBCentralManager,didRetrievePeripherals peripherals: [CBPeripheral])
+    {
+        
+    }
+    
+    
+    
+    // MARK: - Table View
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        if peripherals.count == 0
+        {
+            peripheralsTableView.isHidden = true
+            emptyView.isHidden  = false
+            
+        }
+        else
+        {
+            peripheralsTableView.isHidden = false
+            emptyView.isHidden = true
+            
+        }
+        
+        return peripherals.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        
+        let cell = self.peripheralsTableView.dequeueReusableCell(withIdentifier: "peripheralCell", for: indexPath) as! MasterViewTableViewCell
+        
+        
+        let peripheral = (peripherals as NSArray).object(at: indexPath.row) as! Peripherals
+        
+        
+        
+        cell.deviceName.text            = peripheral.name()
+        cell.deviceDescription.text     = peripheral.description
+        
+        cell.deviceIcon.image           = appImages.getImgPeripheralCategory(deviceName: peripheral.name())
+        cell.connectionStatus.image     = appImages.getImgConnectionStatus(isConnected: peripheral.isConnected)
+        cell.signalStrength.image       = appImages.getImgRSSIStatus(rssiValue: peripheral.RSSI)
+        
+        
+        
+        return cell
+        
+        
+    }
+    
+    
 }
 
