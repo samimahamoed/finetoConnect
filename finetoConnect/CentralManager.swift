@@ -9,7 +9,7 @@
 import UIKit
 import CoreBluetooth
 
-class CentralManager: CBCentralManager {
+class CentralManager: CBCentralManager { 
     
 
  

@@ -22,7 +22,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     @IBOutlet var peripheralsTableView: UITableView!
     @IBOutlet var emptyView: UIView!
     @IBOutlet var scanOrnotBtn: UIBarButtonItem!
-    
+    @IBOutlet var busyScannig: UIActivityIndicatorView!
     
     
 
@@ -33,8 +33,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     
     var bleManager                  : CBCentralManager?
     var timer                       : Timer?
-    var timeoutCounter              : UInt16 = UInt16(Constants.app.PERIPHERAL_SCAN_TIMEOUT_PERIOD)
-    var busyScannig                 : UIActivityIndicatorView!
+ //   var timeoutCounter              : Int16 = Int16(Constants.app.PERIPHERAL_SCAN_TIMEOUT_PERIOD)
     
     var peripherals                 = [Peripherals]()
     var flags                       = flagsType(scanning: false)
@@ -58,10 +57,11 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        busyScannig                             = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+        //busyScannig                             = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
         busyScannig.hidesWhenStopped            = true
-        self.navigationItem.leftBarButtonItem   = UIBarButtonItem(customView: busyScannig)
         busyScannig.startAnimating()
+       
+        
         
         
         let serialQueue = DispatchQueue.init(label: Constants.queues.bleCentralManagerSerialQueue)
@@ -94,12 +94,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     
     // MARK:-  helpers
     func scanTimerEvent(){
-        peripheralsTableView.reloadData()
-        
-        timeoutCounter = timeoutCounter-1
-        if timeoutCounter <= 0 {
             scanningState(active:false)
-        }
     }
     
     
@@ -133,7 +128,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
         }
         
         
-  
+        DispatchQueue.main.async {
             if enable == true {
                 let options: NSDictionary = NSDictionary(objects: [NSNumber(value: true)], forKeys: [CBCentralManagerScanOptionAllowDuplicatesKey as NSCopying])
                 if filterUUID != nil {
@@ -141,14 +136,18 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
                 } else {
                     self.bleManager?.scanForPeripherals(withServices: nil, options: options as? [String : AnyObject])
                 }
-                self.timer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(self.scanTimerEvent), userInfo: nil, repeats: true)
+                
+                self.timer = Timer.scheduledTimer(timeInterval: Double(Constants.app.PERIPHERAL_SCAN_TIMEOUT_PERIOD),
+                                                  target: self,
+                                                  selector: #selector(self.scanTimerEvent),
+                                                  userInfo: nil,
+                                                  repeats: false)
             } else {
-                NSLog("stop scan")
                 self.timer?.invalidate()
                 self.timer = nil
                 self.bleManager?.stopScan()
             }
-    
+        }
         
         return true
     }
@@ -159,10 +158,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
         if active {
             busyScannig.startAnimating()
             flags.scanning = true
-            scanOrnotBtn.title = "Cancel2"
-            
-            timer = Timer.scheduledTimer(timeInterval: 1.0 , target: self, selector: #selector(scanTimerEvent), userInfo: nil, repeats: true)
-            timeoutCounter = UInt16(Constants.app.PERIPHERAL_SCAN_TIMEOUT_PERIOD)
+            scanOrnotBtn.title = "Cancel"
             
             let success = self.scanForPeripherals(enable: true,filterUUID: nil)
             if !success {/*TODO: log error*/ }
@@ -210,15 +206,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
         return retreivedPeripherals!
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
     //MARK: - CBCentralManagerDelegate
