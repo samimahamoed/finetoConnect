@@ -14,7 +14,7 @@ struct flagsType {
 }
 
 
-class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,CBCentralManagerDelegate{
+class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,centralManagerDelegate{
     
     
     
@@ -31,11 +31,11 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     
     var detailViewController: DetailViewController? = nil
     
-    var bleManager                  : CBCentralManager?
+    var centralManager                  : CentralManager?
     var timer                       : Timer?
- //   var timeoutCounter              : Int16 = Int16(Constants.app.PERIPHERAL_SCAN_TIMEOUT_PERIOD)
+
     
-    var peripherals                 = [Peripherals]()
+  
     var flags                       = flagsType(scanning: false)
     
     
@@ -57,16 +57,11 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //busyScannig                             = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+        centralManager = CentralManager.singleToneInstance
+        centralManager?.delegate = self
         busyScannig.hidesWhenStopped            = true
         busyScannig.startAnimating()
        
-        
-        
-        
-        let serialQueue = DispatchQueue.init(label: Constants.queues.bleCentralManagerSerialQueue)
-        bleManager = CBCentralManager(delegate: self, queue: serialQueue)
-        
         
         if let split = self.splitViewController {
             
@@ -97,71 +92,32 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
             scanningState(active:false)
     }
     
-    
-    func scanForPeripherals(enable:Bool, filterUUID:CBUUID?) -> Bool {
-        
-        
-        guard bleManager?.state == CBManagerState.poweredOn
-            else
-        {
-            let alert = UIAlertController(title: "Error", message: "", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
-            
-            switch (bleManager?.state)! {
-            case .unknown:
-                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unknown
-            case .resetting:
-                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.resetting
-            case .unsupported:
-                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unsupported
-            case .unauthorized:
-                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unauthorized
-            default:
-                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unknown
-            }
-            
-            self.present(alert, animated: true, completion: nil)
-            
-            NSLog("%s", alert.message! as String)
-            
-            return false
-        }
-        
-        
-        DispatchQueue.main.async {
-            if enable == true {
-                let options: NSDictionary = NSDictionary(objects: [NSNumber(value: true)], forKeys: [CBCentralManagerScanOptionAllowDuplicatesKey as NSCopying])
-                if filterUUID != nil {
-                    self.bleManager?.scanForPeripherals(withServices: [filterUUID!], options: options as? [String : AnyObject])
-                } else {
-                    self.bleManager?.scanForPeripherals(withServices: nil, options: options as? [String : AnyObject])
-                }
-                
-                self.timer = Timer.scheduledTimer(timeInterval: Double(Constants.app.PERIPHERAL_SCAN_TIMEOUT_PERIOD),
-                                                  target: self,
-                                                  selector: #selector(self.scanTimerEvent),
-                                                  userInfo: nil,
-                                                  repeats: false)
-            } else {
-                self.timer?.invalidate()
-                self.timer = nil
-                self.bleManager?.stopScan()
-            }
-        }
-        
-        return true
-    }
-    
-    
+
     func scanningState(active:Bool){
+        
+        
+        let alert = UIAlertController(title: "Error", message: "", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
         
         if active {
             busyScannig.startAnimating()
             flags.scanning = true
             scanOrnotBtn.title = "Cancel"
             
-            let success = self.scanForPeripherals(enable: true,filterUUID: nil)
-            if !success {/*TODO: log error*/ }
+            let (success,message) = (centralManager?.scanForPeripherals(enable: true,filterUUID: nil))!
+            
+            if !success {
+                alert.message = message
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+            
+            self.timer = Timer.scheduledTimer(timeInterval: Double(Constants.app.PERIPHERAL_SCAN_TIMEOUT_PERIOD),
+                                              target: self,
+                                              selector: #selector(self.scanTimerEvent),
+                                              userInfo: nil,
+                                              repeats: false)
+            
             return
         }
         
@@ -171,8 +127,14 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
             busyScannig.stopAnimating()
             flags.scanning = false
             scanOrnotBtn.title = "Scan"
-            let success  = scanForPeripherals(enable: false, filterUUID: nil)
-            if !success {/*TODO: log error*/ }
+        
+            let (success, message)  = (centralManager?.scanForPeripherals(enable: false, filterUUID: nil))!
+                
+            if !success {
+                alert.message = message
+                self.present(alert, animated: true, completion: nil)
+            }
+        
     }
     
     
@@ -200,7 +162,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
         
         if filterUUID != nil {
             
-            retreivedPeripherals     = (bleManager?.retrieveConnectedPeripherals(withServices: [filterUUID!]))! as NSArray
+            retreivedPeripherals     = (centralManager?.bleManager?.retrieveConnectedPeripherals(withServices: [filterUUID!]))! as NSArray
         }
         
         return retreivedPeripherals!
@@ -211,58 +173,23 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     
     //MARK: - CBCentralManagerDelegate
     
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+    func centralManagerDidUpdateBLEState(success: Bool, message:String) {
         
-        guard central.state == CBManagerState.poweredOn
-            else
-        {
-            let alert = UIAlertController(title: "Error", message: "", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
-            
-            switch central.state {
-            case .unknown:
-                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unknown
-            case .resetting:
-                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.resetting
-            case .unsupported:
-                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unsupported
-            case .unauthorized:
-                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unauthorized
-            default:
-                alert.message = Constants.MSGs.CENTRAL_MANAGER_STATE.unknown
-            }
-            
+        let alert = UIAlertController(title: "Error", message: "", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+        if !success {
+            alert.message = message
             self.present(alert, animated: true, completion: nil)
-            
-            NSLog("%s", alert.message! as String)
-            
             return
         }
         
-        
-        
         scanningState(active:true)
-        // peripherals = NSMutableArray(array: self.getConnectedPeripherals(filterUUID: nil))
-        
         
     }
     
     
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber)
+    func centralManagerDidDiscoverPeripherals()
     {
-        
-        var peripheralDevice = Peripherals(withPeripheral: peripheral, andRSSI: RSSI.int32Value, andIsConnected: false)
-        
-        
-        if !self.peripherals.contains(peripheralDevice)
-        {
-            self.peripherals.append(peripheralDevice)
-        }
-        else
-        {
-            peripheralDevice = self.peripherals[self.peripherals.index(of: peripheralDevice)!]
-            peripheralDevice.RSSI = RSSI.int32Value
-        }
         
         DispatchQueue.main.async {
             self.peripheralsTableView.reloadData()
@@ -271,7 +198,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     }
     
     
-    func centralManager(_ central: CBCentralManager,didRetrieveConnectedPeripherals peripherals: [CBPeripheral])
+    func centralManagerDidRetrieveConnectedPeripherals(peripherals: [CBPeripheral])
     {
         
     }
@@ -292,7 +219,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if peripherals.count == 0
+        if centralManager?.peripherals.count == 0
         {
             peripheralsTableView.isHidden = true
             emptyView.isHidden  = false
@@ -305,7 +232,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
             
         }
         
-        return peripherals.count
+        return (centralManager?.peripherals.count)!
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -314,16 +241,16 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
         let cell = self.peripheralsTableView.dequeueReusableCell(withIdentifier: "peripheralCell", for: indexPath) as! MasterViewTableViewCell
         
         
-        let peripheral = (peripherals as NSArray).object(at: indexPath.row) as! Peripherals
+        let peripheral = (centralManager?.peripherals[indexPath.row])
         
         
         
-        cell.deviceName.text            = peripheral.name()
-        cell.deviceDescription.text     = peripheral.description
+        cell.deviceName.text            = peripheral?.name()
+        cell.deviceDescription.text     = peripheral?.description
         
-        cell.deviceIcon.image           = appImages.getImgPeripheralCategory(deviceName: peripheral.name())
-        cell.connectionStatus.image     = appImages.getImgConnectionStatus(isConnected: peripheral.isConnected)
-        cell.signalStrength.image       = appImages.getImgRSSIStatus(rssiValue: peripheral.RSSI)
+        cell.deviceIcon.image           = appImages.getImgPeripheralCategory(deviceName: (peripheral?.name())!)
+        cell.connectionStatus.image     = appImages.getImgConnectionStatus(isConnected: (peripheral?.isConnected)!)
+        cell.signalStrength.image       = appImages.getImgRSSIStatus(rssiValue: (peripheral?.RSSI)!)
         
         
         

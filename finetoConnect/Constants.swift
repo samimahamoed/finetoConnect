@@ -27,6 +27,7 @@ struct Constants {
         
         
         struct CENTRAL_MANAGER_STATE {
+            
             static let unknown          = "The current state of the central manager is unknown; an update is imminent"
             static let resetting        = "The connection with the system service was momentarily lost; an update is imminent."
             static let unsupported      = "The platform does not support Bluetooth low energy."
