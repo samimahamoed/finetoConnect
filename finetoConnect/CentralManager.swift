@@ -14,6 +14,7 @@ import CoreBluetooth
     
     
     func centralManagerDidUpdateBLEState(success: Bool, message:String)
+    @objc func centralManagerDidDiscoverPeripherals()
     @objc optional func didConnectPeripheral(deviceName : String)
     @objc optional func didDisconnectPeripheral()
     @objc optional func peripheralReady()
@@ -162,8 +163,8 @@ class CentralManager: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
             peripheralDevice.RSSI = RSSI.int32Value
         }
         
-      
-        
+        delegate?.centralManagerDidDiscoverPeripherals()
+                
     }
     
     

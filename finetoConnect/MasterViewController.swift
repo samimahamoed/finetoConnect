@@ -57,8 +57,8 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        centralManager = CentralManager.singleToneInstance
-        centralManager?.delegate = self
+        centralManager                          = CentralManager.singleToneInstance
+        centralManager?.delegate                = self
         busyScannig.hidesWhenStopped            = true
         busyScannig.startAnimating()
        
