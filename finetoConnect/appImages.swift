@@ -52,7 +52,7 @@ public class appImages: UIImage {
         case let name where name.range(of:"switch")    != nil:
             image = UIImage(named: "switch")!
         case let name where name.range(of: "doorlock") != nil:
-            image = UIImage(named: "switch")!
+            image = UIImage(named: "doorlock")!
        
         default:
             image = UIImage(named: "unknown")!  //WTF?
@@ -61,34 +61,33 @@ public class appImages: UIImage {
         return image
     }
 
+    public static func getPrimaryServiceTag(isPrimary:Bool) -> UIImage {
+   
+        if isPrimary {
+            return UIImage(named: "primary_service")!
+        }
+            return UIImage(named: "unknown")!
+        
+    }
     
     
-//    public func getImgPeripheralCategory(category: String) -> UIImage! {
-//        
-//        switch (category) {
-////        case HMAccessoryCategoryTypeLightbulb:
-////            return UIImage(named: "CategoryLightbulb")
-////        case HMAccessoryCategoryTypeDoorLock:
-////            return UIImage(named: "CategoryLock")
-////        case HMAccessoryCategoryTypeGarageDoorOpener:
-////            return UIImage(named: "CategoryGarageDoor")
-////        case HMAccessoryCategoryTypeSwitch:
-////            return UIImage(named: "CategorySwitch")
-////        case HMAccessoryCategoryTypeOutlet:
-////            return UIImage(named: "CategoryOutlet")
-////        case HMAccessoryCategoryTypeFan:
-////            return UIImage(named: "CategoryFan")
-////            
-////        case "0FBA259B-05AC-46F2-875F-204ABB6D9FE7":
-////            return UIImage(named: "switch_off")
-////            
-////            
-////            
-//        
-//            
-//            
-//        default: return UIImage(named: "CategoryNotSupported")
-//        }
-//    }
+    public static func getImgServiceIcon(Name: String) -> UIImage {
+        //TODO try to use UUID instead
+        
+        var image: UIImage
+        
+        
+        switch Name.lowercased() {
+        case let name where name.range(of:"switch")    != nil:
+            image = UIImage(named: "switch")!
+        case let name where name.range(of: "doorlock") != nil:
+            image = UIImage(named: "doorlock")!
+            
+        default:
+            image = UIImage(named: "unknown")!  
+        }
+        
+        return image
+    }
     
 }

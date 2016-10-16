@@ -31,7 +31,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     
     var detailViewController: DetailViewController? = nil
     
-    var centralManager                  : CentralManager?
+    var centralManager              : CentralManager?
     var timer                       : Timer?
 
     
@@ -58,7 +58,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
         super.viewDidLoad()
         
         centralManager                          = CentralManager.singleToneInstance
-        centralManager?.delegate                = self
+        centralManager?.scannerDelegate          = self
         busyScannig.hidesWhenStopped            = true
         busyScannig.startAnimating()
        
@@ -112,11 +112,14 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
                 return
             }
             
-            self.timer = Timer.scheduledTimer(timeInterval: Double(Constants.app.PERIPHERAL_SCAN_TIMEOUT_PERIOD),
+                DispatchQueue.main.async {
+                    self.timer = Timer.scheduledTimer(timeInterval: Double(
+                                              Constants.app.PERIPHERAL_SCAN_TIMEOUT_PERIOD),
                                               target: self,
                                               selector: #selector(self.scanTimerEvent),
                                               userInfo: nil,
                                               repeats: false)
+               }
             
             return
         }
@@ -139,19 +142,17 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     
     
     
-    
-    
     // MARK: - Segues
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-            //            if let indexPath = self.tableView.indexPathForSelectedRow {
-            //                let object = objects[indexPath.row] as! NSDate
-            //                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-            //                controller.detailItem = object
-            //                controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
-            //                controller.navigationItem.leftItemsSupplementBackButton = true
-            //            }
+                        if let indexPath = self.peripheralsTableView.indexPathForSelectedRow {
+                            let peripheral = centralManager?.peripherals[indexPath.row]
+                            let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+                            controller.peripheral = peripheral
+                            controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
+                            controller.navigationItem.leftItemsSupplementBackButton = true
+                        }
         }
     }
     
