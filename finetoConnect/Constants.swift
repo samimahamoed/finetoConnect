@@ -22,6 +22,9 @@ struct Constants {
                 static let disconnecting   = CBPeripheralState.disconnecting    //The peripheral is currently in the process of disconnecting from the central manager.
         }
         
+        
+        
+        
         struct identifiers {
             static let defaultSegue = "segueSrv"
         }
@@ -56,6 +59,7 @@ struct Constants {
             static let UNKNOWN_DEVICE               = "Unknown Device"
             static let UNKNOWN_Service              = "Unknown Service"
             static let UNKNOWN_Characteristic       = "Unknown Characteristic"
+            static let UNKNOWN_Property             = "Unknown Characteristic Property"
         }
         
         

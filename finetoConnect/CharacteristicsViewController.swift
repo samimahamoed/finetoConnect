@@ -18,15 +18,18 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
     
     var centralManager:CentralManager?
     
+    var peripheral:Peripherals?
+    
     var service    : CBService? {
         didSet {
+            
             centralManager                                   = CentralManager.singleToneInstance
             
             centralManager?.characteristicsViewDelegate      = self
             
             service?.peripheral.delegate                     = centralManager
-            
-           
+
+            service?.peripheral.discoverCharacteristics(nil, for: service!)
         }
     }
     
@@ -39,14 +42,14 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
         // Do any additional setup after loading the view, typically from a nib.
         self.navigationItem.rightBarButtonItem = self.editButtonItem
         
-        //self.characteristicsTableView.reloadData()
+       
+    
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         DispatchQueue.main.async {
             self.characteristicsTableView.reloadData()
-
         }
     }
     
@@ -115,7 +118,82 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
         
     }
     
+ 
     
+    func didDiscoverCharacteristics(peripheral: CBPeripheral, error: Error?)
+    {
+        NSLog("didDiscoverCharacteristics, characteristicsViewController ")
+        
+        if peripheral == self.service?.peripheral {
+            
+            DispatchQueue.main.async {
+            
+                if(error==nil){
+                   self.characteristicsTableView.reloadData()
+                }
+                else
+                {
+                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+                 
+                        self.present(alert, animated: true, completion: nil)
+                        return
+                
+                }
+            }
+        }
+        
+    }
+    
+    
+    func didUpdateNotificationStateForCharacteristic(peripheral: CBPeripheral,characteristic: CBCharacteristic, error: Error?)
+    {
+        NSLog("didUpdateNotificationStateForCharacteristic, characteristicsViewController ")
+    
+        if peripheral == self.service?.peripheral {
+
+            if(error==nil){
+                let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+    
+                self.present(alert, animated: true, completion: nil)
+                 //TODO: Reattempt
+                return
+            }
+        }
+
+    
+    }
+    
+    func  didUpdateValueForCharacteristic(peripheral: CBPeripheral,characteristic: CBCharacteristic, error: Error?)
+    {
+        NSLog(" didUpdateValueForCharacteristic, characteristicsViewController ")
+        
+        if peripheral == self.service?.peripheral {
+            
+            
+            
+            if(error==nil){
+                let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+                
+                self.present(alert, animated: true, completion: nil)
+                //TODO: Reattempt
+                return
+            }else{
+                DispatchQueue.main.async {
+                    self.characteristicsTableView.reloadData()
+                }
+                
+                //TODO: Return ACK if notification
+                return
+            }
+            
+            
+        }
+        
+        
+    }
     
     
     // MARK: - Table View
@@ -138,8 +216,22 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
         if let characterstics = self.service?.characteristics?[indexPath.row] {
             cell.Name.text  = Characteristics.getCharacteristicsName(uuid:characterstics.uuid)
             cell.UUID.text  = characterstics.uuid.uuidString
-            cell.value.text = characterstics.value?.base64EncodedString()
-            cell.property.text = "read"
+           
+            
+            if characterstics.value != nil {
+                cell.value.text = self.peripheral?.valueToString(value: characterstics.value!)
+            }
+            
+        
+            cell.property.text = Characteristics.getCharacteristicsPropertie(property: characterstics.properties);
+     
+            if(self.peripheral?.canWriteValue(property: characterstics.properties))!{
+                cell.writeBtn.setImage(UIImage(named:"write"), for: .normal)
+                cell.writeBtn.isEnabled = true
+            }else{
+                cell.writeBtn.setImage(UIImage(named:"null"), for: .normal)
+                cell.writeBtn.isEnabled = false
+            }
         }
      
         return cell
@@ -147,7 +239,7 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
-        return true
+        return false
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {

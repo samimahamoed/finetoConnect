@@ -39,6 +39,8 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
     @IBOutlet var SignalStrength: UIImageView!
     
 
+    
+    
     var centralManager:CentralManager?
     
     var peripheral    : Peripherals? {
@@ -53,8 +55,7 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
     
     var timer       :Timer?
     var colorMemo   :UIColor?
-    
-    
+    var activityIndicator:UIActivityIndicatorView!
     
     
     @IBAction func connectOrnotBtnEvent(_ sender: UIButton) {
@@ -64,6 +65,7 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
                 DispatchQueue.main.async {
                     self.connectOrnotBtn.setTitle("Disconnecting ...",for: .selected)
                     self.connectOrnotBtn.backgroundColor = UIColor.darkGray
+                    self.activityIndicator.startAnimating()
                     
                     if self.connectOrnotBtn.currentTitle == "Connect" {
                         NSLog("\(Constants.MSGs.ERROR_LOG.Conflict + self.description) connect, DetailViewController ")
@@ -77,6 +79,7 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
                 DispatchQueue.main.async {
                     self.connectOrnotBtn.setTitle("Connecting ...",for: .selected)
                     self.connectOrnotBtn.backgroundColor = UIColor.darkGray
+                    self.activityIndicator.startAnimating()
                     
                     if self.connectOrnotBtn.currentTitle == "Disconnect" {
                         
@@ -140,9 +143,9 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
             }
          
             if let label = self.serviceDataLable {
-                if (device.adData?[CBAdvertisementDataServiceDataKey] as? String) != nil
+                if (device.adData?[CBAdvertisementDataServiceUUIDsKey] as? String) != nil
                 {
-                    label.text = ": " + (device.adData?[CBAdvertisementDataServiceDataKey] as? String)!
+                    label.text = ": " + (device.adData?[CBAdvertisementDataServiceUUIDsKey] as? String)!
                 }
                     
                 else
@@ -181,6 +184,13 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
             
             self.colorMemo = self.connectOrnotBtn.backgroundColor
             
+            activityIndicator = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
+            activityIndicator.color = UIColor.darkGray
+            activityIndicator.hidesWhenStopped = true
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(customView: activityIndicator)
+            
+
+            
             self.timer = Timer.scheduledTimer(withTimeInterval: Double(Constants.app.UI_REFRESH_RATE),
                                               repeats: true,
                                               block: {_ in 
@@ -212,7 +222,6 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
             )
         
             
-           
             
         }
     }
@@ -239,7 +248,7 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
     // MARK:-  helpers
     func uiUpdateTimerEvent(){
         
-        self.Connection.image     = appImages.getImgConnectionStatus(isConnected: (peripheral?.isConnected)!)
+        self.Connection.image           = appImages.getImgConnectionStatus(isConnected: (peripheral?.isConnected)!)
         
         self.SignalStrength.image       = appImages.getImgRSSIStatus(rssiValue: (peripheral?.RSSI)!)
         
@@ -249,15 +258,18 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
     // MARK: - Segues
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == Constants.app.identifiers.defaultSegue {
-            if let indexPath = self.serviceListTableView.indexPathForSelectedRow {
+        // DispatchQueue.main.sync {
+            if segue.identifier == Constants.app.identifiers.defaultSegue {
+              if let indexPath = self.serviceListTableView.indexPathForSelectedRow {
                 let service = self.peripheral?.peripheral.services?[indexPath.row]
                 let controller = (segue.destination as! UINavigationController).topViewController as! CharacteristicsViewController
+                controller.peripheral = self.peripheral
                 controller.service = service
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
-            }
-        }
+              }
+           }
+      // }
     }
     
     
@@ -290,7 +302,8 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
                 self.connectOrnotBtn.setTitle("Disconnect",for: .normal)
             
                 self.connectOrnotBtn.backgroundColor = self.colorMemo
-                
+             
+                self.activityIndicator.stopAnimating()
              }
             
              self.peripheral?.peripheral.discoverServices(nil)
@@ -315,9 +328,9 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
                 
                 self.connectOrnotBtn.setTitle("Connect",for: .normal)
                 self.connectOrnotBtn.backgroundColor = self.colorMemo
+                self.activityIndicator.stopAnimating()
                 
-                
-                    self.serviceListTableView.reloadData()
+                self.serviceListTableView.reloadData()
             }
             
         }

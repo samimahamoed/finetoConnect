@@ -3,8 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
-        <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
-        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -251,7 +249,7 @@
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bkx-d8-bMK">
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  Service  Data                    " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FUy-DM-pNC">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  Service UUID               " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FUy-DM-pNC">
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="150" id="fNO-3y-HmO"/>
                                                 </constraints>
@@ -522,16 +520,16 @@
         <scene sceneID="bu1-Dm-XjB">
             <objects>
                 <tableViewController title="Characteristics" clearsSelectionOnViewWillAppear="NO" id="gyb-1a-IJY" customClass="CharacteristicsViewController" customModule="finetoConnect" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="101" sectionHeaderHeight="22" sectionFooterHeight="22" id="s0A-s6-9lo">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="86" sectionHeaderHeight="22" sectionFooterHeight="22" id="s0A-s6-9lo">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="characteristicsCell" rowHeight="101" id="xai-FY-mOx" customClass="characteristicsTableViewCell" customModule="finetoConnect" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="86" width="375" height="101"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="characteristicsCell" rowHeight="86" id="xai-FY-mOx" customClass="characteristicsTableViewCell" customModule="finetoConnect" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="86" width="375" height="86"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xai-FY-mOx" id="LXu-4d-Kgm">
-                                    <frame key="frameInset" width="342" height="100"/>
+                                    <frame key="frameInset" width="342" height="86"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ckG-tG-qTq">
@@ -549,7 +547,7 @@
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UUID                  " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHG-ez-FDu">
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="100" id="AvH-3X-ZZi"/>
+                                                                <constraint firstAttribute="width" constant="60" id="455-Hc-jD4"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                             <color key="textColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
@@ -566,7 +564,7 @@
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Value                   " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q1a-DI-xSx">
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="100" id="Bbe-pa-uBC"/>
+                                                                <constraint firstAttribute="width" constant="60" id="dwu-7x-42p"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                             <color key="textColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
@@ -574,16 +572,29 @@
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" borderStyle="line" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Rog-4W-f8w">
                                                             <nil key="textColor"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                                             <textInputTraits key="textInputTraits"/>
                                                         </textField>
+                                                        <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="njh-oh-Lvh">
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="30" id="p1C-TP-aRg"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="18"/>
+                                                            <state key="normal" title="Button" image="write"/>
+                                                        </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zAu-BX-IBL">
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="30" id="WWw-F9-0kg"/>
+                                                            </constraints>
+                                                            <state key="normal" title="Button" image="read"/>
+                                                        </button>
                                                     </subviews>
                                                 </stackView>
                                                 <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jUr-6J-7PY">
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="           " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eoj-np-fiF">
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="100" id="Dqp-3u-hrm"/>
+                                                                <constraint firstAttribute="width" constant="60" id="McA-II-JEY"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                             <color key="textColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
@@ -594,33 +605,19 @@
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zAu-BX-IBL">
-                                                            <constraints>
-                                                                <constraint firstAttribute="height" constant="20" id="MIA-nM-MJi"/>
-                                                                <constraint firstAttribute="width" constant="30" id="en9-hp-0Ps"/>
-                                                            </constraints>
-                                                            <state key="normal" title="Button" image="read"/>
-                                                        </button>
-                                                        <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="njh-oh-Lvh">
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="30" id="WiW-BJ-wxN"/>
-                                                            </constraints>
-                                                            <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="18"/>
-                                                            <state key="normal" title="Button" image="write"/>
-                                                        </button>
                                                     </subviews>
-                                                    <constraints>
-                                                        <constraint firstItem="njh-oh-Lvh" firstAttribute="baseline" secondItem="E93-aU-D8j" secondAttribute="firstBaseline" id="PsB-lq-uJs"/>
-                                                        <constraint firstItem="zAu-BX-IBL" firstAttribute="baseline" secondItem="njh-oh-Lvh" secondAttribute="baseline" id="hd5-bY-MIt"/>
-                                                    </constraints>
                                                 </stackView>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="6Tm-GZ-Wfj" firstAttribute="top" secondItem="ckG-tG-qTq" secondAttribute="top" constant="21" id="fXL-1Y-Of0"/>
+                                                <constraint firstItem="jUr-6J-7PY" firstAttribute="top" secondItem="ckG-tG-qTq" secondAttribute="top" constant="57" id="uAE-IK-6c7"/>
+                                            </constraints>
                                         </stackView>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="ckG-tG-qTq" firstAttribute="leading" secondItem="LXu-4d-Kgm" secondAttribute="leadingMargin" id="1Pr-wb-iM9"/>
-                                        <constraint firstItem="ckG-tG-qTq" firstAttribute="trailing" secondItem="LXu-4d-Kgm" secondAttribute="trailingMargin" id="Cyt-Ky-bCc"/>
-                                        <constraint firstItem="ckG-tG-qTq" firstAttribute="top" secondItem="LXu-4d-Kgm" secondAttribute="topMargin" id="hwc-jn-fhD"/>
+                                        <constraint firstItem="ckG-tG-qTq" firstAttribute="top" secondItem="LXu-4d-Kgm" secondAttribute="topMargin" id="T6u-g1-v9k"/>
+                                        <constraint firstItem="ckG-tG-qTq" firstAttribute="leading" secondItem="LXu-4d-Kgm" secondAttribute="leadingMargin" id="bPj-xC-uyk"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="ckG-tG-qTq" secondAttribute="trailing" id="xY8-jg-2jc"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -725,6 +722,6 @@
         <image name="write" width="225" height="225"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Ka4-0M-X1h"/>
+        <segue reference="Tll-UG-LXB"/>
     </inferredMetricsTieBreakers>
 </document>

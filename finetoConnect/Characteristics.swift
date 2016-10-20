@@ -196,6 +196,88 @@ class Characteristics: NSObject {
         return Constants.MSGs.RESULT.UNKNOWN_Characteristic
     }
     
+    static func getCharacteristicsPropertie(property:CBCharacteristicProperties) -> String {
+     
+        var charProperty = ""
+        
+        if property.contains(CBCharacteristicProperties.broadcast) {
+            charProperty += "broadcast,"
+        }
+        
+        if property.contains(CBCharacteristicProperties.read) {
+            charProperty += "read,"
+        }
+        
+        if property.contains(CBCharacteristicProperties.writeWithoutResponse) {
+            charProperty += "write Without Response,"
+        }
+        
+        if property.contains(CBCharacteristicProperties.write) {
+            charProperty += "write,"
+        }
+        
+        if property.contains(CBCharacteristicProperties.notify) {
+            charProperty += "notify,"
+        }
+        
+        if property.contains(CBCharacteristicProperties.indicate) {
+            charProperty += "indicate,"
+        }
+        
+        if property.contains(CBCharacteristicProperties.authenticatedSignedWrites) {
+            charProperty += "authenticated Signed Writes,"
+        }
+        
+        if property.contains(CBCharacteristicProperties.extendedProperties) {
+            charProperty += "extended Properties,"
+        }
+        
+        if property.contains(CBCharacteristicProperties.notifyEncryptionRequired) {
+            charProperty += "notifyEncryptionRequired"
+        }
+        
+        if property.contains(CBCharacteristicProperties.indicateEncryptionRequired) {
+            charProperty += "indicateEncryptionRequired,"
+        }
+        
+        if charProperty == "" {
+             charProperty += Constants.MSGs.RESULT.UNKNOWN_Property
+        }
+        
+        
+        
+        return charProperty
+    }
     
     
-}
+    static func getCharacteristicsPropertieDescription(property:CBCharacteristicProperties) -> (String,String) {
+        
+
+        switch property {
+            
+        case CBCharacteristicProperties.broadcast:
+            return ("broadcast","The characteristic’s value can be broadcast using a characteristic configuration descriptor.")
+        case CBCharacteristicProperties.read:
+            return ("read","The characteristic’s value can be read.")
+        case CBCharacteristicProperties.writeWithoutResponse:
+            return ("writeWithoutResponse","The characteristic’s value can be written, without a response from the peripheral to indicate that the write was successful.")
+        case CBCharacteristicProperties.write:
+            return ("write","The characteristic’s value can be written, with a response from the peripheral to indicate that the write was successful.")
+        case CBCharacteristicProperties.indicate:
+            return ("indicate","Indications of the characteristic’s value are permitted, with a response from the central to indicate that the indication was received.")
+        case CBCharacteristicProperties.authenticatedSignedWrites:
+            return ("authenticatedSignedWrites","Signed writes of the characteristic’s value are permitted, without a response from the peripheral to indicate that the write was successful.")
+        case CBCharacteristicProperties.extendedProperties:
+            return ("extendedProperties","Additional characteristic properties are defined in the characteristic extended properties descriptor.")
+        case CBCharacteristicProperties.notifyEncryptionRequired:
+            return ("notifyEncryptionRequired","Only trusted devices can enable notifications of the characteristic’s value.")
+        case CBCharacteristicProperties.indicateEncryptionRequired:
+            return ("indicateEncryptionRequired","Only trusted devices can enable indications of the characteristic’s value.")
+        default:
+            return (Constants.MSGs.RESULT.UNKNOWN_Property,Constants.MSGs.RESULT.UNKNOWN_Property)
+        }
+        
+    }
+    
+    
+   }
