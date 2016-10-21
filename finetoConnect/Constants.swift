@@ -32,7 +32,7 @@ struct Constants {
         }
         struct identifiers {
             static let defaultSegue     = "segueSrv"
-            static let switchSegue      = "segueSrvFINETOPowerswitchhandle"
+            static let switchSegue      = "FINETOPowerswitchhandle"
         }
     }
     struct queues {
@@ -50,6 +50,8 @@ struct Constants {
         struct ERROR_LOG {
             static let Conflict                     = "Conflicting state with expeced result"
             static let NullInput                    = "value cannot be null, table row"
+            static let FatalError                   = "Fatal error: try to connect the device again"
+            
         }
         struct RESULT {
             static let UNKNOWN_DEVICE               = "Unknown Device"

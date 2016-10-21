@@ -61,7 +61,7 @@ class Services: NSObject {
     
     static private var supportedSrvUUIDS:[CBUUID:String] = [
         
-       CBUUID.init(string:"19581524-C3BB-41E1-BCF9-DCC98D1737C8"):"FINETO Power switch handle",
+       CBUUID.init(string:"19581523-C3BB-41E1-BCF9-DCC98D1737C8"):"FINETO Power switch handle",
 
     ]
     
@@ -74,10 +74,24 @@ class Services: NSObject {
         return Constants.MSGs.RESULT.UNKNOWN_Service
     }
     
-
+    
+    static func getServiceUUID(serviceName:String) -> CBUUID? {
+        
+        for name in self.srvUUIDS {
+            
+            if name.value == serviceName {
+                return name.key
+            }
+        }
+        
+        
+        return nil
+    }
+    
+    
     static func getServiceUISegue(uuid:CBUUID) -> String {
         if let name  = self.supportedSrvUUIDS[uuid] {
-            return Constants.app.identifiers.defaultSegue + name.trimmingCharacters(in: .whitespaces)
+            return Constants.app.identifiers.defaultSegue + name.replacingOccurrences(of:" " , with: "")
         }
         
         return Constants.app.identifiers.defaultSegue

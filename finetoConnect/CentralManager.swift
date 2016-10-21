@@ -19,7 +19,7 @@ import CoreBluetooth
     @objc optional func didDisconnectPeripheral(peripheral: CBPeripheral)
     @objc optional func didFailToConnect(peripheral: CBPeripheral,error: Error?)
     @objc optional func didDiscoverServices(peripheral: CBPeripheral,error: Error?)
-    @objc optional func didDiscoverCharacteristics(peripheral: CBPeripheral,error: Error?)
+    @objc optional func didDiscoverCharacteristics(peripheral: CBPeripheral,service: CBService,error: Error?)
     @objc optional func didUpdateNotificationStateForCharacteristic(peripheral: CBPeripheral,characteristic: CBCharacteristic, error: Error?)
     @objc optional func didUpdateValueForCharacteristic(peripheral: CBPeripheral,characteristic: CBCharacteristic, error: Error?)
     @objc optional func didWriteValueForCharacteristic(peripheral: CBPeripheral,characteristic: CBCharacteristic, error: Error?)
@@ -110,16 +110,6 @@ class CentralManager: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
     }
  
     
-    func getConnectedPeripherals(filterUUID:CBUUID?) -> NSArray {
-        var retreivedPeripherals : NSArray?
-        
-        if filterUUID != nil {
-            
-            retreivedPeripherals     = (bleManager?.retrieveConnectedPeripherals(withServices: [filterUUID!]))! as NSArray
-        }
-        
-        return retreivedPeripherals!
-    }
     
     
     //MARK: - CBCentralManagerDelegate
@@ -155,8 +145,7 @@ class CentralManager: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
         
         
        
-        // peripherals = NSMutableArray(array: self.getConnectedPeripherals(filterUUID: nil))
-         scannerDelegate?.centralManagerDidUpdateBLEState(success: true, message:message)
+        scannerDelegate?.centralManagerDidUpdateBLEState(success: true, message:message)
         
         
     }
@@ -250,12 +239,12 @@ class CentralManager: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard error == nil else {
             NSLog("CentralManager did didDiscoverCharacteristicsForService \(error)")
-            characteristicsViewDelegate?.didDiscoverCharacteristics!(peripheral: peripheral, error: error)
+            characteristicsViewDelegate?.didDiscoverCharacteristics!(peripheral: peripheral,service:service, error: error)
             
             return
         }
         
-        characteristicsViewDelegate?.didDiscoverCharacteristics!(peripheral: peripheral, error:error)
+        characteristicsViewDelegate?.didDiscoverCharacteristics!(peripheral: peripheral,service: service, error:error)
     
     }
   
@@ -267,7 +256,9 @@ class CentralManager: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         guard error == nil else {
             NSLog("CentralManager didUpdateNotificationStateForCharacteristic \(error)")
-            characteristicsViewDelegate?.didDiscoverCharacteristics!(peripheral: peripheral, error: error)
+            characteristicsViewDelegate?.didUpdateNotificationStateForCharacteristic!(peripheral: peripheral,
+                                                                                      characteristic: characteristic,
+                                                                                      error: error)
             return
         }
         
@@ -281,7 +272,9 @@ class CentralManager: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         guard error == nil else {
             NSLog("CentralManager didUpdateNotificationStateForCharacteristic \(error)")
-            characteristicsViewDelegate?.didDiscoverCharacteristics!(peripheral: peripheral, error: error)
+            characteristicsViewDelegate?.didUpdateValueForCharacteristic!(peripheral: peripheral,
+                                                                          characteristic: characteristic,
+                                                                          error: error)
             return
         }
         

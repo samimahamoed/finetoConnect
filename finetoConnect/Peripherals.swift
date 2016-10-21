@@ -55,7 +55,7 @@ import CoreBluetooth
         var strData:String = value.replacingOccurrences(of: "0x", with: "")
         let bytes          = [UInt8](strData.utf8)
         
-        NSLog("%u", bytes)
+        NSLog("writeCharacteristicValue %u", bytes)
         
         let data = Data(bytes:bytes)
         
@@ -148,9 +148,6 @@ import CoreBluetooth
     
     
     func dataRefresh() -> Void {
-        
-        
-        
         switch peripheral.state {
         case CBPeripheralState.connected:
             self.isConnected = true
@@ -167,11 +164,6 @@ import CoreBluetooth
             
         }
     }
-    
-    
-    
-    
-    
 }
 
 

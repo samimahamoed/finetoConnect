@@ -33,8 +33,7 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
         }
     }
     
-    var timer       :Timer?
-    var colorMemo   :UIColor?
+
     
    
     override func viewDidLoad() {
@@ -59,29 +58,6 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
     }
     
     
-    func configureView() {
-        
-        
-        if (self.service?.peripheral) != nil {
-            
-           
-            
-            self.timer = Timer.scheduledTimer(withTimeInterval: Double(Constants.app.UI_REFRESH_RATE),
-                                              repeats: true,
-                                              block: {_ in
-                                                
-                                   
-                                                
-                                             
-                                                
-                }
-            )
-            
-            
-            
-            
-        }
-    }
     
     
   
@@ -109,7 +85,7 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
     
  
     
-    func didDiscoverCharacteristics(peripheral: CBPeripheral, error: Error?)
+    func didDiscoverCharacteristics(peripheral: CBPeripheral, service: CBService,error: Error?)
     {
         NSLog("didDiscoverCharacteristics, characteristicsViewController ")
         
@@ -303,11 +279,11 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
             cell.writeBtn.addTarget(self, action: #selector(self.writeBtnEvent(_:)), for: UIControlEvents.touchUpInside)
             
             if(self.peripheral?.canWriteValue(property: characterstics.properties))!{
-                //cell.writeBtn.isHidden  = false
+                cell.writeBtn.isHidden  = false
                 cell.writeBtn.isEnabled = true
                 cell.value.isEnabled = true
             }else{
-               // cell.writeBtn.isHidden  = true
+                cell.writeBtn.isHidden  = true
                 cell.writeBtn.isEnabled = false
                 cell.value.isEnabled    = false
             }
@@ -315,10 +291,10 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
             cell.readBtn.tag = indexPath.row
             cell.readBtn.addTarget(self, action: #selector(self.readBtnEvent(_:)), for: UIControlEvents.touchUpInside)
             if(self.peripheral?.canReadValue(property: characterstics.properties))!{
-               // cell.readBtn.isHidden  = false
+                cell.readBtn.isHidden  = false
                 cell.readBtn.isEnabled = true
             }else{
-               // cell.readBtn.isHidden  = true
+                cell.readBtn.isHidden  = true
                 cell.readBtn.isEnabled = false
             }
         }
@@ -331,12 +307,7 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
         return false
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
-        }
-    }
+
     
 
 

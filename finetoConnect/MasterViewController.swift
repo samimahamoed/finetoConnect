@@ -11,6 +11,7 @@ import CoreBluetooth
 
 struct flagsType {
     var scanning:Bool = false
+    var viewAll :Bool = true
 }
 
 
@@ -23,8 +24,8 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     @IBOutlet var emptyView: UIView!
     @IBOutlet var scanOrnotBtn: UIBarButtonItem!
     @IBOutlet var busyScannig: UIActivityIndicatorView!
-    
-    
+    @IBOutlet var viewAll: UIBarButtonItem!
+    @IBOutlet var viewOnlyConnected: UIBarButtonItem!
 
     
     
@@ -36,7 +37,7 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
 
     
   
-    var flags                       = flagsType(scanning: false)
+    var flags                       = flagsType(scanning: false, viewAll:true)
     
     
     
@@ -54,6 +55,23 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
     }
     
     
+    @IBAction func viewAllEvent(_ sender: AnyObject) {
+        flags.viewAll = true
+        viewAll.tintColor = UIColor.blue
+        viewOnlyConnected.tintColor = UIColor.black
+        
+    }
+    
+    
+    @IBAction func viewOnlyConnectedEvent(_ sender: AnyObject) {
+        flags.viewAll = false
+        viewAll.tintColor = UIColor.black
+        viewOnlyConnected.tintColor = UIColor.blue
+        
+    }
+   
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -68,7 +86,10 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
             let controllers = split.viewControllers
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
-    }
+        
+        flags.viewAll = true
+        viewAll.tintColor = UIColor.blue
+        viewOnlyConnected.tintColor = UIColor.black    }
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -241,19 +262,17 @@ class MasterViewController: UIViewController,UITableViewDataSource,UITableViewDe
         
         let cell = self.peripheralsTableView.dequeueReusableCell(withIdentifier: "peripheralCell", for: indexPath) as! MasterViewTableViewCell
         
-        
-        let peripheral = (centralManager?.peripherals[indexPath.row])
-        
-        
-        
-        cell.deviceName.text            = peripheral?.name()
-        cell.deviceDescription.text     = peripheral?.description
-        
-        cell.deviceIcon.image           = appImages.getImgPeripheralCategory(deviceName: (peripheral?.name())!)
-        cell.connectionStatus.image     = appImages.getImgConnectionStatus(isConnected: (peripheral?.isConnected)!)
-        cell.signalStrength.image       = appImages.getImgRSSIStatus(rssiValue: (peripheral?.RSSI)!)
-        
-        
+   
+            let peripheral = (centralManager?.peripherals[indexPath.row])
+            
+            
+            cell.deviceName.text            = peripheral?.name()
+            cell.deviceDescription.text     = peripheral?.description
+            
+            cell.deviceIcon.image           = appImages.getImgPeripheralCategory(deviceName: (peripheral?.name())!)
+            cell.connectionStatus.image     = appImages.getImgConnectionStatus(isConnected: (peripheral?.isConnected)!)
+            cell.signalStrength.image       = appImages.getImgRSSIStatus(rssiValue: (peripheral?.RSSI)!)
+             
         
         return cell
         

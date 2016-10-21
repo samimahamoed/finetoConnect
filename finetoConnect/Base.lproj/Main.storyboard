@@ -47,9 +47,15 @@
                                 <items>
                                     <barButtonItem title="All" id="nIs-dV-AO9">
                                         <color key="tintColor" red="0.0064184596079999998" green="0.01614182799" blue="0.02090754534" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <connections>
+                                            <action selector="viewAllEvent:" destination="t4O-3m-24m" id="K33-OA-83T"/>
+                                        </connections>
                                     </barButtonItem>
-                                    <barButtonItem image="Connected" width="50" id="lNH-pn-of4"/>
-                                    <barButtonItem image="userIcon" width="50" id="P1f-jf-luk"/>
+                                    <barButtonItem image="Connected" width="50" id="lNH-pn-of4">
+                                        <connections>
+                                            <action selector="viewOnlyConnectedEvent:" destination="t4O-3m-24m" id="5D4-i1-adO"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kWU-NA-snw">
@@ -181,6 +187,8 @@
                         <outlet property="emptyView" destination="f9M-V4-Lft" id="lMx-f1-xUq"/>
                         <outlet property="peripheralsTableView" destination="UTn-jQ-Js9" id="Lmz-Wm-zMx"/>
                         <outlet property="scanOrnotBtn" destination="on7-0G-OYC" id="26m-bN-dls"/>
+                        <outlet property="viewAll" destination="nIs-dV-AO9" id="lSw-cU-hn3"/>
+                        <outlet property="viewOnlyConnected" destination="lNH-pn-of4" id="SZt-P3-rW9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UU0-rT-5qK" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -319,9 +327,7 @@
                                 </subviews>
                             </stackView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ABl-Es-dju">
-                                <items>
-                                    <barButtonItem title="Item" id="DUT-D0-UQE"/>
-                                </items>
+                                <items/>
                             </toolbar>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="A4a-wJ-WNm">
                                 <color key="backgroundColor" red="0.96463197469999995" green="0.96474748850000003" blue="0.96459275479999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -736,59 +742,66 @@
                                 </segments>
                                 <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
-                                    <action selector="switchStateChanged:" destination="xJ9-mF-U6O" eventType="valueChanged" id="Cs0-24-Ktc"/>
+                                    <action selector="switchStateChangeEvent:" destination="xJ9-mF-U6O" eventType="valueChanged" id="9Md-2S-ClB"/>
                                 </connections>
                             </segmentedControl>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7IC-fa-w9r">
-                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                <state key="normal" title="Connect" backgroundImage="ConnectButton">
-                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                    <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
-                                <state key="highlighted" backgroundImage="ConnectButtonPressed"/>
-                            </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="switch_off" translatesAutoresizingMaskIntoConstraints="NO" id="tjv-0D-i73">
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="tjv-0D-i73" secondAttribute="height" multiplier="235:236" id="B33-v1-KC8"/>
-                                    <constraint firstAttribute="height" constant="236" id="EOo-X1-uQn"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="236" id="m65-EX-YM9"/>
-                                    <constraint firstAttribute="width" constant="235" id="yVw-6v-IYI"/>
+                                    <constraint firstAttribute="height" constant="236" id="E2P-Cp-Wlw"/>
                                 </constraints>
                             </imageView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" translatesAutoresizingMaskIntoConstraints="NO" id="fcD-2B-mS1">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="42" id="kme-oH-K9n"/>
+                                </constraints>
                                 <items>
-                                    <barButtonItem title="Options" id="UJJ-YP-wIn">
+                                    <barButtonItem title="Connect" id="UJJ-YP-wIn">
                                         <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <connections>
+                                            <action selector="connectBtnEvent:" destination="xJ9-mF-U6O" id="QfM-XJ-V0x"/>
+                                        </connections>
                                     </barButtonItem>
                                 </items>
                             </toolbar>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OGw-Zf-rAf" userLabel="Connection ">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="7Hh-D2-XHh"/>
+                                    <constraint firstAttribute="width" constant="25" id="mbM-nM-w6q"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="fcD-2B-mS1" firstAttribute="leading" secondItem="RkO-7W-rPs" secondAttribute="leadingMargin" constant="-20" id="1LM-ke-ZAO"/>
-                            <constraint firstItem="tjv-0D-i73" firstAttribute="leading" secondItem="1Kc-OL-Rm2" secondAttribute="leading" id="4gk-Sa-dTQ"/>
-                            <constraint firstItem="fcD-2B-mS1" firstAttribute="top" secondItem="7IC-fa-w9r" secondAttribute="bottom" constant="13" id="AqG-sM-5FR"/>
-                            <constraint firstItem="tjv-0D-i73" firstAttribute="top" secondItem="BvO-TG-Cbq" secondAttribute="bottom" constant="87" id="Gbc-Bh-3W0"/>
-                            <constraint firstItem="otk-CO-nXE" firstAttribute="top" secondItem="fcD-2B-mS1" secondAttribute="bottom" id="H08-dv-abA"/>
-                            <constraint firstItem="1Kc-OL-Rm2" firstAttribute="top" secondItem="tjv-0D-i73" secondAttribute="bottom" constant="8" symbolic="YES" id="TCQ-iR-dU5"/>
-                            <constraint firstItem="tjv-0D-i73" firstAttribute="centerX" secondItem="RkO-7W-rPs" secondAttribute="centerX" id="Z79-ju-2aU"/>
-                            <constraint firstItem="1Kc-OL-Rm2" firstAttribute="centerX" secondItem="RkO-7W-rPs" secondAttribute="centerX" id="wNt-gN-4X9"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="fcD-2B-mS1" secondAttribute="trailing" constant="-20" id="xUW-bf-Tu5"/>
-                            <constraint firstItem="7IC-fa-w9r" firstAttribute="centerX" secondItem="RkO-7W-rPs" secondAttribute="centerX" id="zBt-YA-fuM"/>
+                            <constraint firstItem="tjv-0D-i73" firstAttribute="centerX" secondItem="fcD-2B-mS1" secondAttribute="centerX" id="8ZM-tF-Ae1"/>
+                            <constraint firstItem="otk-CO-nXE" firstAttribute="top" secondItem="OGw-Zf-rAf" secondAttribute="bottom" constant="8" id="BuK-ep-0a6"/>
+                            <constraint firstItem="otk-CO-nXE" firstAttribute="top" secondItem="OGw-Zf-rAf" secondAttribute="bottom" constant="8" id="EmC-dR-Jva"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="1Kc-OL-Rm2" secondAttribute="trailing" constant="54" id="IPk-Ob-6GJ"/>
+                            <constraint firstItem="1Kc-OL-Rm2" firstAttribute="top" secondItem="tjv-0D-i73" secondAttribute="bottom" constant="8" symbolic="YES" id="J8A-Io-iZI"/>
+                            <constraint firstItem="tjv-0D-i73" firstAttribute="top" secondItem="BvO-TG-Cbq" secondAttribute="bottom" constant="87" id="THc-ZV-351"/>
+                            <constraint firstItem="1Kc-OL-Rm2" firstAttribute="leading" secondItem="RkO-7W-rPs" secondAttribute="leadingMargin" constant="54" id="TzV-xU-7Pu"/>
+                            <constraint firstItem="tjv-0D-i73" firstAttribute="leading" secondItem="1Kc-OL-Rm2" secondAttribute="leading" id="XkA-at-F9f"/>
+                            <constraint firstItem="tjv-0D-i73" firstAttribute="trailing" secondItem="1Kc-OL-Rm2" secondAttribute="trailing" id="czR-EZ-i3J"/>
+                            <constraint firstItem="OGw-Zf-rAf" firstAttribute="leading" secondItem="RkO-7W-rPs" secondAttribute="leadingMargin" id="hgR-rW-dRl"/>
+                            <constraint firstItem="fcD-2B-mS1" firstAttribute="leading" secondItem="RkO-7W-rPs" secondAttribute="leadingMargin" constant="-20" id="iwf-ae-cze"/>
+                            <constraint firstItem="fcD-2B-mS1" firstAttribute="bottom" secondItem="otk-CO-nXE" secondAttribute="top" id="mEH-5W-tsy"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="nxa-3y-MGd"/>
+                    <navigationItem key="navigationItem" id="Dgp-vW-cEx"/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
-                    <nil key="simulatedTopBarMetrics"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="Connection" destination="OGw-Zf-rAf" id="4Dm-JC-gfB"/>
                         <outlet property="btnSwitchState" destination="1Kc-OL-Rm2" id="3ar-fd-fWr"/>
+                        <outlet property="connectBtn" destination="UJJ-YP-wIn" id="0me-9P-Bs8"/>
+                        <outlet property="deviceName" destination="Dgp-vW-cEx" id="Ahz-5d-scP"/>
                         <outlet property="imgSwitchState" destination="tjv-0D-i73" id="094-1H-jr2"/>
+                        <outlet property="navBar" destination="Dgp-vW-cEx" id="EX5-I6-zuK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rYH-3s-8vv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2690" y="-247"/>
+            <point key="canvasLocation" x="2688.8000000000002" y="-247.82608695652175"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="LhK-q5-r3e">
@@ -810,17 +823,14 @@
         </scene>
     </scenes>
     <resources>
-        <image name="ConnectButton" width="64" height="64"/>
-        <image name="ConnectButtonPressed" width="64" height="64"/>
         <image name="Connected" width="30" height="22"/>
         <image name="Logo" width="458" height="142"/>
         <image name="read" width="221" height="228"/>
         <image name="scanning" width="64" height="64"/>
         <image name="switch_off" width="128" height="128"/>
-        <image name="userIcon" width="24" height="24"/>
         <image name="write" width="225" height="225"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Tll-UG-LXB"/>
+        <segue reference="Ka4-0M-X1h"/>
     </inferredMetricsTieBreakers>
 </document>

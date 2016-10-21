@@ -9,13 +9,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "finetoConnect/CharacteristicsViewController.swift"
-            timestampString = "498748867.968876"
+            filePath = "finetoConnect/SwitchViewController.swift"
+            timestampString = "498773223.90718"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "263"
-            endingLineNumber = "263"
-            landmarkName = "readBtnEvent(_:)"
+            startingLineNumber = "298"
+            endingLineNumber = "298"
+            landmarkName = "didUpdateValueForCharacteristic(peripheral:characteristic:error:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

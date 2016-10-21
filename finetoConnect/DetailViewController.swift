@@ -259,18 +259,33 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-            if segue.identifier == Constants.app.identifiers.defaultSegue {
-              if let indexPath = self.serviceListTableView.indexPathForSelectedRow {
+        
+           if segue.identifier == Constants.app.identifiers.defaultSegue+Constants.app.identifiers.switchSegue {
+            if let indexPath = self.serviceListTableView.indexPathForSelectedRow {
+                let service = self.peripheral?.peripheral.services?[indexPath.row]
+                let controller = (segue.destination as! UINavigationController).topViewController as! SwitchViewController
+                
+                controller.device = Switch(withPeripheral: self.peripheral!)
+                controller.service = service
+                controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
+                controller.navigationItem.leftItemsSupplementBackButton = true
+            }
+            
+            return
+          }
+        
+        
+        
+          if segue.identifier == Constants.app.identifiers.defaultSegue {
+            if let indexPath = self.serviceListTableView.indexPathForSelectedRow {
                 let service = self.peripheral?.peripheral.services?[indexPath.row]
                 let controller = (segue.destination as! UINavigationController).topViewController as! CharacteristicsViewController
                 controller.peripheral = self.peripheral
                 controller.service = service
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
-              }
-                
-                return
-           }
+            }
+          }
     
     }
     
