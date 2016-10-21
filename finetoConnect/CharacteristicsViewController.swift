@@ -84,30 +84,19 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
     }
     
     
-    func insertNewObject(_ sender: Any) {
-       
-        let indexPath = IndexPath(row: 0, section: 0)
-        self.tableView.insertRows(at: [indexPath], with: .automatic)
-    }
+  
     
     // MARK: - Segues
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetail" {
-       //     if let indexPath = self.tableView.indexPathForSelectedRow {
-//                let object = objects[indexPath.row] as! Peripherals
-//                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-//                controller.peripheral = object 
-//                controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
-//                controller.navigationItem.leftItemsSupplementBackButton = true
-  //          }
-        }
+
     }
     
     
     //MARK: - CentralManagerDelegate
     func centralManagerDidUpdateBLEState(success: Bool, message:String) {
         
+        DispatchQueue.main.async {
         let alert = UIAlertController(title: "Error", message: "", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
         if !success {
@@ -115,7 +104,7 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
             self.present(alert, animated: true, completion: nil)
             return
         }
-        
+      }
     }
     
  
@@ -152,12 +141,18 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
     
         if peripheral == self.service?.peripheral {
 
-            if(error==nil){
+            guard error==nil else {
+              DispatchQueue.main.async {
+                
                 let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
                 alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
-    
+                
                 self.present(alert, animated: true, completion: nil)
-                 //TODO: Reattempt
+                //TODO: Reattempt
+                
+               
+              }
+                
                 return
             }
         }
@@ -171,32 +166,108 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
         
         if peripheral == self.service?.peripheral {
             
-            
-            
+          DispatchQueue.main.async {
             if(error==nil){
+               
+                    self.characteristicsTableView.reloadData()
+                
+                
+                //TODO: Return ACK if notification
+                return
+                
+            }else{
+           
+                
                 let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
                 alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
                 
                 self.present(alert, animated: true, completion: nil)
                 //TODO: Reattempt
                 return
-            }else{
-                DispatchQueue.main.async {
-                    self.characteristicsTableView.reloadData()
-                }
                 
-                //TODO: Return ACK if notification
-                return
             }
             
-            
+         }
         }
         
         
     }
     
+    func   didWriteValueForCharacteristic(peripheral: CBPeripheral,characteristic: CBCharacteristic, error: Error?)
+    {
+        NSLog(" didUpdateValueForCharacteristic, characteristicsViewController ")
+        
+        if peripheral == self.service?.peripheral {
+            
+        DispatchQueue.main.async {
+            if(error==nil){
+               
+                    self.characteristicsTableView.reloadData()
+                
+                
+                //TODO: Return ACK if notification
+                return
+                
+            }else{
+                
+                
+                let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+                
+                self.present(alert, animated: true, completion: nil)
+                //TODO: Reattempt
+                return
+                
+            }
+                
+       }
+            
+            
+        }
+        
+    }
+    
+    
+   
     
     // MARK: - Table View
+    
+    func writeBtnEvent(_ sender: UIButton) -> Void {
+        let cell = characteristicsTableView.viewWithTag(sender.tag) as! characteristicsTableViewCell
+       
+       
+        if let characterstics = self.service?.characteristics?[sender.tag] {
+            
+            guard cell.value.text == nil else {
+                self.peripheral?.writeCharacteristicValue(value: cell.value.text!,
+                                                          characteristic: characterstics,
+                                                          type: CBCharacteristicWriteType.withoutResponse)
+                
+                return
+            }
+            
+            
+            let alert = UIAlertController(title: "Error",
+                                          message: Constants.MSGs.ERROR_LOG.NullInput + String("row  \(sender.tag)"),
+                                          preferredStyle: UIAlertControllerStyle.alert)
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+            
+            self.present(alert, animated: true, completion: nil)
+   
+        }
+        
+    }
+    
+    func readBtnEvent(_ sender: UIButton) -> Void {
+        
+        if let characterstics = self.service?.characteristics?[sender.tag] {
+         
+                characterstics.service.peripheral.readValue(for: characterstics)
+        }
+    }
+    
+    
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -212,25 +283,43 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "characteristicsCell", for: indexPath) as! characteristicsTableViewCell
+        cell.tag = indexPath.row
         
         if let characterstics = self.service?.characteristics?[indexPath.row] {
             cell.Name.text  = Characteristics.getCharacteristicsName(uuid:characterstics.uuid)
             cell.UUID.text  = characterstics.uuid.uuidString
            
             
+            cell.value.tag = indexPath.row
             if characterstics.value != nil {
                 cell.value.text = self.peripheral?.valueToString(value: characterstics.value!)
             }
             
-        
+            
             cell.property.text = Characteristics.getCharacteristicsPropertie(property: characterstics.properties);
-     
+            
+            
+            cell.writeBtn.tag = indexPath.row
+            cell.writeBtn.addTarget(self, action: #selector(self.writeBtnEvent(_:)), for: UIControlEvents.touchUpInside)
+            
             if(self.peripheral?.canWriteValue(property: characterstics.properties))!{
-                cell.writeBtn.setImage(UIImage(named:"write"), for: .normal)
+                //cell.writeBtn.isHidden  = false
                 cell.writeBtn.isEnabled = true
+                cell.value.isEnabled = true
             }else{
-                cell.writeBtn.setImage(UIImage(named:"null"), for: .normal)
+               // cell.writeBtn.isHidden  = true
                 cell.writeBtn.isEnabled = false
+                cell.value.isEnabled    = false
+            }
+            
+            cell.readBtn.tag = indexPath.row
+            cell.readBtn.addTarget(self, action: #selector(self.readBtnEvent(_:)), for: UIControlEvents.touchUpInside)
+            if(self.peripheral?.canReadValue(property: characterstics.properties))!{
+               // cell.readBtn.isHidden  = false
+                cell.readBtn.isEnabled = true
+            }else{
+               // cell.readBtn.isHidden  = true
+                cell.readBtn.isEnabled = false
             }
         }
      

@@ -510,6 +510,7 @@
                         <outlet property="serviceListTableView" destination="EIC-iw-aqr" id="LG1-Hj-w6h"/>
                         <outlet property="txPowerLable" destination="73B-p3-v8f" id="zch-Li-XrM"/>
                         <segue destination="tNs-u9-rzW" kind="showDetail" identifier="segueSrv" id="oUI-pg-6Us"/>
+                        <segue destination="ey9-Ub-q7E" kind="showDetail" identifier="segueSrvFINETOPowerswitchhandle" id="Pd0-H4-rcw"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>
@@ -580,13 +581,17 @@
                                                                 <constraint firstAttribute="width" constant="30" id="p1C-TP-aRg"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="18"/>
-                                                            <state key="normal" title="Button" image="write"/>
+                                                            <state key="normal" title="Button" image="write">
+                                                                <color key="titleShadowColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                                                            </state>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zAu-BX-IBL">
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="30" id="WWw-F9-0kg"/>
                                                             </constraints>
-                                                            <state key="normal" title="Button" image="read"/>
+                                                            <state key="normal" title="Button" image="read">
+                                                                <color key="titleShadowColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                                                            </state>
                                                         </button>
                                                     </subviews>
                                                 </stackView>
@@ -644,7 +649,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9k5-5F-KqX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2644" y="331.48425787106447"/>
+            <point key="canvasLocation" x="2689" y="555"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="Nki-YV-4Qg">
@@ -710,14 +715,108 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="A3q-To-hMA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1704.8" y="331.48425787106447"/>
+            <point key="canvasLocation" x="1777" y="555"/>
+        </scene>
+        <!--Switch View Controller-->
+        <scene sceneID="myJ-1X-J3V">
+            <objects>
+                <viewController storyboardIdentifier="SwitchViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="xJ9-mF-U6O" customClass="SwitchViewController" customModule="finetoConnect" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="BvO-TG-Cbq"/>
+                        <viewControllerLayoutGuide type="bottom" id="otk-CO-nXE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="RkO-7W-rPs">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="1Kc-OL-Rm2">
+                                <segments>
+                                    <segment title="OFF"/>
+                                    <segment title="ON"/>
+                                </segments>
+                                <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="switchStateChanged:" destination="xJ9-mF-U6O" eventType="valueChanged" id="Cs0-24-Ktc"/>
+                                </connections>
+                            </segmentedControl>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7IC-fa-w9r">
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <state key="normal" title="Connect" backgroundImage="ConnectButton">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <state key="highlighted" backgroundImage="ConnectButtonPressed"/>
+                            </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="switch_off" translatesAutoresizingMaskIntoConstraints="NO" id="tjv-0D-i73">
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="tjv-0D-i73" secondAttribute="height" multiplier="235:236" id="B33-v1-KC8"/>
+                                    <constraint firstAttribute="height" constant="236" id="EOo-X1-uQn"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="236" id="m65-EX-YM9"/>
+                                    <constraint firstAttribute="width" constant="235" id="yVw-6v-IYI"/>
+                                </constraints>
+                            </imageView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" translatesAutoresizingMaskIntoConstraints="NO" id="fcD-2B-mS1">
+                                <items>
+                                    <barButtonItem title="Options" id="UJJ-YP-wIn">
+                                        <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="fcD-2B-mS1" firstAttribute="leading" secondItem="RkO-7W-rPs" secondAttribute="leadingMargin" constant="-20" id="1LM-ke-ZAO"/>
+                            <constraint firstItem="tjv-0D-i73" firstAttribute="leading" secondItem="1Kc-OL-Rm2" secondAttribute="leading" id="4gk-Sa-dTQ"/>
+                            <constraint firstItem="fcD-2B-mS1" firstAttribute="top" secondItem="7IC-fa-w9r" secondAttribute="bottom" constant="13" id="AqG-sM-5FR"/>
+                            <constraint firstItem="tjv-0D-i73" firstAttribute="top" secondItem="BvO-TG-Cbq" secondAttribute="bottom" constant="87" id="Gbc-Bh-3W0"/>
+                            <constraint firstItem="otk-CO-nXE" firstAttribute="top" secondItem="fcD-2B-mS1" secondAttribute="bottom" id="H08-dv-abA"/>
+                            <constraint firstItem="1Kc-OL-Rm2" firstAttribute="top" secondItem="tjv-0D-i73" secondAttribute="bottom" constant="8" symbolic="YES" id="TCQ-iR-dU5"/>
+                            <constraint firstItem="tjv-0D-i73" firstAttribute="centerX" secondItem="RkO-7W-rPs" secondAttribute="centerX" id="Z79-ju-2aU"/>
+                            <constraint firstItem="1Kc-OL-Rm2" firstAttribute="centerX" secondItem="RkO-7W-rPs" secondAttribute="centerX" id="wNt-gN-4X9"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="fcD-2B-mS1" secondAttribute="trailing" constant="-20" id="xUW-bf-Tu5"/>
+                            <constraint firstItem="7IC-fa-w9r" firstAttribute="centerX" secondItem="RkO-7W-rPs" secondAttribute="centerX" id="zBt-YA-fuM"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="nxa-3y-MGd"/>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="btnSwitchState" destination="1Kc-OL-Rm2" id="3ar-fd-fWr"/>
+                        <outlet property="imgSwitchState" destination="tjv-0D-i73" id="094-1H-jr2"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rYH-3s-8vv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2690" y="-247"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="LhK-q5-r3e">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ey9-Ub-q7E" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Eg1-HJ-1uk">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="xJ9-mF-U6O" kind="relationship" relationship="rootViewController" id="tQu-WQ-Fl1"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tw1-Rh-CZH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1778" y="-247"/>
         </scene>
     </scenes>
     <resources>
+        <image name="ConnectButton" width="64" height="64"/>
+        <image name="ConnectButtonPressed" width="64" height="64"/>
         <image name="Connected" width="30" height="22"/>
         <image name="Logo" width="458" height="142"/>
         <image name="read" width="221" height="228"/>
         <image name="scanning" width="64" height="64"/>
+        <image name="switch_off" width="128" height="128"/>
         <image name="userIcon" width="24" height="24"/>
         <image name="write" width="225" height="225"/>
     </resources>

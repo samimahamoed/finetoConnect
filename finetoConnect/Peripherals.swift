@@ -9,39 +9,6 @@
 import UIKit
 import CoreBluetooth
 
-extension Data {
-    var u8:UInt8 {
-        assert(self.count >= 1)
-        var byte:UInt8 = 0x00
-        self.copyBytes(to: &byte, count: 1)
-        return byte
-    }
-//    
-//    var u16:UInt16 {
-//        var array = UnsafeMutablePointer<UInt16>(u16)
-//        assert(self.count >= 2)
-//        var word:UnsafeMutablePointer<UInt16> = 0x0000
-//        self.copyBytes(to: &word, count: 2)
-//        return word
-//    }
-//    
-//    var u32:UInt32 {
-//        assert(self.count >= 4)
-//        var u32:UInt32 = 0x00000000
-//        self.copyBytes(to: &UInt8(u32), count: 4)
-//        return u32
-//    }
-    
-    var u8s:[UInt8] { // Array of UInt8, Swift byte array basically
-        var buffer:[UInt8] = [UInt8](repeating: 0, count: self.count)
-        self.copyBytes(to: &buffer, count: self.count)
-        return buffer
-    }
-    
-    var utf8:String? {
-        return String(data: self, encoding: String.Encoding.utf8)
-    }
-}
 
 
 @objc class Peripherals: NSObject{
@@ -69,11 +36,45 @@ extension Data {
     
 
     
+
+    
+    //MARK:- Peripheral Behavier
+    
+    func enableNotification(enable:Bool, characteristic:CBCharacteristic) -> Void {
+        
+        if(characteristic.properties.contains(CBCharacteristicProperties.notify) ||
+            characteristic.properties.contains(CBCharacteristicProperties.indicate)
+            ){
+            self.peripheral.setNotifyValue(enable, for: characteristic)
+        }
+    }
+    
+    
+    func writeCharacteristicValue(value:String, characteristic: CBCharacteristic, type: CBCharacteristicWriteType) -> Void {
+        
+        var strData:String = value.replacingOccurrences(of: "0x", with: "")
+        let bytes          = [UInt8](strData.utf8)
+        
+        NSLog("%u", bytes)
+        
+        let data = Data(bytes:bytes)
+        
+        self.peripheral.writeValue(data, for: characteristic,type:type)
+        
+        
+    }
+    
+    
+    
+    
+    //MARK:- helpers
+    
     override public func isEqual(_ object: Any?) -> Bool
     {
         let other : Peripherals = object as! Peripherals
         return peripheral == other.peripheral
     }
+    
     
     
     func name()->String{
@@ -85,49 +86,40 @@ extension Data {
     }
     
     
+    
+    
     func valueToString(value:Data) -> String {
         
         let length = value.count/MemoryLayout<UInt8>.size;
         
-        //let data = characteristic.value
-//        var array = UnsafeMutablePointer<UInt8>(nil)
-//        
-//        value.copyBytes(to: array, count: value.count)
-        
-        
         switch length {
-        case 0...1:
-            return String(format: "%X",value.u8)
+        case 1:
+            return String(format: "0x%X",value.u8)
    
             
-        case 1...2 :
-            return String(format: "%X",value.u8)
+        case 2 :
+ 
+            return String(format: "0x%X",UInt16(CFSwapInt16BigToHost(value.u16)))
 
-        case 2...4 :
-            return String(format: "%X",value.u8)
-
+        case 4 :
             
-        case 2...8 :
-            return value.base64EncodedString()
-
+            return String(format: "0x%X",UInt32(CFSwapInt32BigToHost(value.u32)))
             
+        case 8 :
             
+            return String(format: "0x%X",UInt64(CFSwapInt64BigToHost(value.u64)))
+      
         default:
-            return value.base64EncodedString()
+            return value.rowDataToString()
         }
         
     
        
     }
     
-    func enableNotification(enable:Bool, characteristic:CBCharacteristic) -> Void {
 
-        if(characteristic.properties.contains(CBCharacteristicProperties.notify) ||
-           characteristic.properties.contains(CBCharacteristicProperties.indicate)
-        ){
-            self.peripheral.setNotifyValue(enable, for: characteristic)
-         }
-    }
+    
+    
     
     func canWriteValue(property:CBCharacteristicProperties) -> Bool {
       
@@ -144,6 +136,15 @@ extension Data {
     }
     
     
+    func canReadValue(property:CBCharacteristicProperties) -> Bool {
+        
+        var canRead:Bool = false
+        
+        if property.contains(CBCharacteristicProperties.read) {canRead = true}
+  
+        return canRead
+        
+    }
     
     
     func dataRefresh() -> Void {

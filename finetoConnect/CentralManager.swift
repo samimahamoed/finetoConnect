@@ -22,8 +22,7 @@ import CoreBluetooth
     @objc optional func didDiscoverCharacteristics(peripheral: CBPeripheral,error: Error?)
     @objc optional func didUpdateNotificationStateForCharacteristic(peripheral: CBPeripheral,characteristic: CBCharacteristic, error: Error?)
     @objc optional func didUpdateValueForCharacteristic(peripheral: CBPeripheral,characteristic: CBCharacteristic, error: Error?)
-
-    
+    @objc optional func didWriteValueForCharacteristic(peripheral: CBPeripheral,characteristic: CBCharacteristic, error: Error?)
     @objc optional func peripheralReady()
     @objc optional func peripheralNotSupported()
     
@@ -294,16 +293,22 @@ class CentralManager: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
     
     
     
-    //
-//    func peripheral(peripheral: CBPeripheral, didWriteValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
-//        guard error == nil else {
-//            log(withLevel: .WarningLogLevel, andMessage: "Writing value to characteristic has failed")
-//            logError(error: error!)
-//            return
-//        }
-//        log(withLevel: .InfoLogLevel, andMessage: "Data written to characteristic: \(characteristic.UUID.UUIDString)")
-//    }
-//    
+    
+    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        guard error == nil else {
+            NSLog("CentralManager didWriteValueForCharacteristic \(error)")
+            characteristicsViewDelegate?.didWriteValueForCharacteristic!(peripheral: peripheral,
+                                                                         characteristic: characteristic,
+                                                                         error: error)
+            return
+        }
+        
+        characteristicsViewDelegate?.didWriteValueForCharacteristic!(peripheral: peripheral,
+                                                                      characteristic: characteristic,
+                                                                      error: error)
+    }
+    
+//
 //    func peripheral(peripheral: CBPeripheral, didWriteValueForDescriptor descriptor: CBDescriptor, error: NSError?) {
 //        guard error == nil else {
 //            log(withLevel: .WarningLogLevel, andMessage: "Writing value to descriptor has failed")

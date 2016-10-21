@@ -258,7 +258,7 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
     // MARK: - Segues
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // DispatchQueue.main.sync {
+        
             if segue.identifier == Constants.app.identifiers.defaultSegue {
               if let indexPath = self.serviceListTableView.indexPathForSelectedRow {
                 let service = self.peripheral?.peripheral.services?[indexPath.row]
@@ -268,8 +268,10 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
               }
+                
+                return
            }
-      // }
+    
     }
     
     

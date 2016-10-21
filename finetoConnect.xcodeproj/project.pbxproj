@@ -26,6 +26,7 @@
 		155463641DB2554200E78F4F /* serviceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155463631DB2554200E78F4F /* serviceTableViewCell.swift */; };
 		157EBBA21DB00FFB0048058B /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157EBBA11DB00FFB0048058B /* Services.swift */; };
 		15ADCEB61DB37633005A2DDF /* characteristicsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ADCEB51DB37633005A2DDF /* characteristicsTableViewCell.swift */; };
+		15E7EBDF1DBA1FC0007ECED6 /* Data+TypeConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E7EBDE1DBA1FC0007ECED6 /* Data+TypeConversion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		155463631DB2554200E78F4F /* serviceTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = serviceTableViewCell.swift; path = Extensions/serviceTableViewCell.swift; sourceTree = "<group>"; };
 		157EBBA11DB00FFB0048058B /* Services.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
 		15ADCEB51DB37633005A2DDF /* characteristicsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = characteristicsTableViewCell.swift; sourceTree = "<group>"; };
+		15E7EBDE1DBA1FC0007ECED6 /* Data+TypeConversion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+TypeConversion.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +194,7 @@
 		15BD1BC81DA656D70083B284 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				15E7EBDE1DBA1FC0007ECED6 /* Data+TypeConversion.swift */,
 				1551F2D01DA904C40015D249 /* MasterViewTableViewCell.swift */,
 				155463631DB2554200E78F4F /* serviceTableViewCell.swift */,
 				15ADCEB51DB37633005A2DDF /* characteristicsTableViewCell.swift */,
@@ -357,6 +360,7 @@
 				152B02551DA6C23200EBD9DE /* DetailViewController.swift in Sources */,
 				1551F2D41DA9101C0015D249 /* appImages.swift in Sources */,
 				1551F2CB1DA8E0EC0015D249 /* appErrorHandler.swift in Sources */,
+				15E7EBDF1DBA1FC0007ECED6 /* Data+TypeConversion.swift in Sources */,
 				157EBBA21DB00FFB0048058B /* Services.swift in Sources */,
 				152B02531DA6C23200EBD9DE /* MasterViewController.swift in Sources */,
 				1551F2C91DA691640015D249 /* CentralManager.swift in Sources */,
