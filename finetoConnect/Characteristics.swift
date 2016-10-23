@@ -13,7 +13,7 @@ class Characteristics: NSObject {
     static private var characteristicsUUIDS:[CBUUID:String] = [
         //custom 128 bit uuids
         
-        CBUUID.init(string:"19581524-C3BB-41E1-BCF9-DCC98D1737C8"):"FINETO Power switch read",
+        CBUUID.init(string:"0000BEEF-1212-EFDE-1523-785FEF13D123"):"FINETO Power switch value",
         CBUUID.init(string:"19581525-C3BB-41E1-BCF9-DCC98D1737C8"):"FINETO Power switch write",
         CBUUID.init(string:"6E400001-B5A3-F393-E0A9-E50E24DCCA9E"):"NordicSemiconductor UART",
         CBUUID.init(string:"00001908-0000-1000-8000-00805F9B34FB"):"NordicSemiconductor DFU",

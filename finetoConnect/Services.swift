@@ -17,7 +17,7 @@ class Services: NSObject {
     static private var srvUUIDS:[CBUUID:String] = [
         //custom 128 bit uuids
         
-        CBUUID.init(string:"19581523-C3BB-41E1-BCF9-DCC98D1737C8"):"FINETO Power switch handle",
+        CBUUID.init(string:"0000F00D-1212-EFDE-1523-785FEF13D123"):"FINETO Power switch handle",
         CBUUID.init(string:"6E400001-B5A3-F393-E0A9-E50E24DCCA9E"):"NordicSemiconductor UART",
         CBUUID.init(string:"00001908-0000-1000-8000-00805F9B34FB"):"NordicSemiconductor DFU",
         CBUUID.init(string:"00001909-0000-1002-8000-00805F9B34FB"):"Apple ANCS",
@@ -61,7 +61,7 @@ class Services: NSObject {
     
     static private var supportedSrvUUIDS:[CBUUID:String] = [
         
-       CBUUID.init(string:"19581523-C3BB-41E1-BCF9-DCC98D1737C8"):"FINETO Power switch handle",
+       CBUUID.init(string:"0000F00D-1212-EFDE-1523-785FEF13D123"):"FINETO Power switch handle",
 
     ]
     

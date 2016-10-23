@@ -20,8 +20,8 @@ class Switch: Peripherals {
     
       init(withPeripheral peripheral: Peripherals) {
         if let uuid = Services.getServiceUUID(serviceName: "FINETO Power switch handle"){self.fiterUUIDs.append(uuid)}
-        if let uuid = Characteristics.getCharacteristicsUUID(characteristicName: "FINETO Power switch read"){self.fiterUUIDs.append(uuid)}
-        if let uuid = Characteristics.getCharacteristicsUUID(characteristicName: "FINETO Power switch write"){self.fiterUUIDs.append(uuid)}
+        if let uuid = Characteristics.getCharacteristicsUUID(characteristicName: "FINETO Power switch value"){self.fiterUUIDs.append(uuid)}
+     
         
         super.init(withPeripheral: peripheral.peripheral,
                    andRSSI: peripheral.RSSI,
@@ -46,14 +46,12 @@ class Switch: Peripherals {
             self.peripheral.writeValue(data, for: switchPowerStateCharacteristicWrite!,type:CBCharacteristicWriteType.withResponse)
          }else{
             for characteristic : CBCharacteristic in service.characteristics! {
-                if characteristic.uuid.isEqual(self.fiterUUIDs[2]){
+                if characteristic.uuid.isEqual(self.fiterUUIDs[1]){
                     NSLog(characteristic.uuid.uuidString)
                     self.switchPowerStateCharacteristicWrite = characteristic
                 }
-                
-                
-                
             }
+            
             if switchPowerStateCharacteristicWrite != nil{
                 self.peripheral.writeValue(data, for: switchPowerStateCharacteristicWrite!,type:CBCharacteristicWriteType.withResponse)
             }
@@ -75,17 +73,12 @@ class Switch: Peripherals {
     {
         for characteristic : CBCharacteristic in service.characteristics! {
         
-            if characteristic.uuid.isEqual(self.fiterUUIDs[2]){
+            if characteristic.uuid.isEqual(self.fiterUUIDs[1]){
                 self.switchPowerStateCharacteristicWrite = characteristic
-             //   peripheral.setNotifyValue(true, for: characteristic)
+               
             }
             
-            if characteristic.uuid.isEqual(self.fiterUUIDs[1]){
-                NSLog(characteristic.uuid.uuidString)
-                self.switchPowerStateCharacteristicRead = characteristic
-                //peripheral.setNotifyValue(true, for: characteristic)
-            }
-        }
+       }
     }
         
 }

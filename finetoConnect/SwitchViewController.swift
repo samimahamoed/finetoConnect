@@ -57,7 +57,7 @@ class SwitchViewController: UIViewController,centralManagerDelegate {
     
     @IBAction func switchStateChangeEvent(_ sender: AnyObject){
         
-        btnSwitchState.isEnabled = false
+ 
         device?.dataRefresh()
         
         if (device?.isConnected)!{
@@ -145,8 +145,11 @@ class SwitchViewController: UIViewController,centralManagerDelegate {
                                               block: {_ in
                                                 
                                                 device.dataRefresh()
-                                                //device.readPowerState()
+                                                device.readPowerState()
                                                 
+                                                if(device.peripheral != self.service?.peripheral ){
+                                                    NSLog("MISMUCH")
+                                                }
                                                 
                                                 if device.peripheral.state != CBPeripheralState.connected &&
                                                     device.peripheral.state != CBPeripheralState.disconnected
@@ -328,7 +331,7 @@ class SwitchViewController: UIViewController,centralManagerDelegate {
     
     func   didWriteValueForCharacteristic(peripheral: CBPeripheral,characteristic: CBCharacteristic, error: Error?)
     {
-        NSLog(" didUpdateValueForCharacteristic, SwitchViewController ")
+        NSLog(" didWriteValueForCharacteristic, SwitchViewController ")
         
         if peripheral == self.service?.peripheral {
             

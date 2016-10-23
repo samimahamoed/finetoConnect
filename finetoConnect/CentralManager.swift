@@ -229,6 +229,7 @@ class CentralManager: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
             return
         }
         
+     
         detailViewDelegate?.didDiscoverServices!(peripheral: peripheral,error: error)
         
         
@@ -300,21 +301,7 @@ class CentralManager: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
                                                                       characteristic: characteristic,
                                                                       error: error)
     }
-    
-//
-//    func peripheral(peripheral: CBPeripheral, didWriteValueForDescriptor descriptor: CBDescriptor, error: NSError?) {
-//        guard error == nil else {
-//            log(withLevel: .WarningLogLevel, andMessage: "Writing value to descriptor has failed")
-//            logError(error: error!)
-//            return
-//        }
-//        log(withLevel: .InfoLogLevel, andMessage: "Data written to descriptor: \(descriptor.UUID.UUIDString)")
-//    }
-//    
-
-//    
-//
-//    
+  
     
     
     

@@ -94,7 +94,8 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
             DispatchQueue.main.async {
             
                 if(error==nil){
-                   self.characteristicsTableView.reloadData()
+      
+                    self.characteristicsTableView.reloadData()
                 }
                 else
                 {
@@ -279,11 +280,11 @@ class CharacteristicsViewController: UITableViewController,centralManagerDelegat
             cell.writeBtn.addTarget(self, action: #selector(self.writeBtnEvent(_:)), for: UIControlEvents.touchUpInside)
             
             if(self.peripheral?.canWriteValue(property: characterstics.properties))!{
-                cell.writeBtn.isHidden  = false
+                //cell.writeBtn.isHidden  = false
                 cell.writeBtn.isEnabled = true
                 cell.value.isEnabled = true
             }else{
-                cell.writeBtn.isHidden  = true
+                //cell.writeBtn.isHidden  = true
                 cell.writeBtn.isEnabled = false
                 cell.value.isEnabled    = false
             }

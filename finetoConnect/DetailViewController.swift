@@ -380,7 +380,7 @@ class DetailViewController: UIViewController,UITableViewDataSource,UITableViewDe
         NSLog("didDiscoverServices, DetailViewController ")
         
         if peripheral == self.peripheral?.peripheral {
-            
+         
             DispatchQueue.main.async {
                 self.serviceListTableView.reloadData()
             }
